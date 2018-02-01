@@ -1,15 +1,11 @@
-package cn.panda.springspider.spider;
+package cn.panda.spider.spider;
 
-import cn.panda.springspider.dao.Porn91Dao;
-import cn.panda.springspider.entity.Porn91;
+import cn.panda.spider.dao.Porn91Dao;
+import cn.panda.spider.entity.Porn91;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.proxy.Proxy;
-import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 
 import javax.annotation.Resource;
 
@@ -86,7 +82,6 @@ public class SpiderFor91 implements PageProcessor{
                 e.printStackTrace();
             }
         }
-
 
     }
 

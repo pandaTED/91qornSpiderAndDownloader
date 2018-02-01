@@ -24,8 +24,6 @@ public class SpiderSingle implements PageProcessor {
     Logger logger = LoggerFactory.getLogger(getClass());
 
 
-
-
     @Bean
     SpiderSingle getSpiderSingle(){
         return new SpiderSingle();
@@ -34,14 +32,14 @@ public class SpiderSingle implements PageProcessor {
     private Site site = Site.me().
             setDomain("91porn.com").
             addCookie("language","cn_CN").
-            addCookie("91username","woscaizi").
-            addCookie("__cfduid","d2e5bed5e6ccad9cc8ce19614bdd29e641517452076").
-            addCookie("CLIPSHARE","h258dll476jt9mm05mdvh06am7").
-            addCookie("DUID","bc33%2BIabhyRyKgrj4FJx3T5AeHxlmK1b7cwuWb2tB9zGq6YL").
+            addCookie("91username","").     //请自己登录91根据实际填写
+            addCookie("__cfduid","").   //请自己登录91根据实际填写
+            addCookie("CLIPSHARE","").  //请自己登录91根据实际填写
+            addCookie("DUID","bc33%").
             addCookie("EMAILVERIFIED","no").
             addCookie("level","7").
             addCookie("user_level","7").
-            addCookie("USERNAME","a7ceUjdXiZMJ7Wk6rJz9L7MLFAion5dMbgg3bVWmPaVfeoYFAA").
+            addCookie("USERNAME","").   //请自己登录91根据实际填写
             setRetryTimes(3).
             setSleepTime(1000).
             setTimeOut(10000);
@@ -57,7 +55,6 @@ public class SpiderSingle implements PageProcessor {
 
        String vedioUrl =  page.getHtml().xpath("//div/video/source/@src").toString();
        String name = page.getHtml().xpath("//*[@id=\"viewvideo-title\"]/text()").toString();
-
 
 //        System.out.println("============================");
 //        System.out.println(page.getHtml().toString());

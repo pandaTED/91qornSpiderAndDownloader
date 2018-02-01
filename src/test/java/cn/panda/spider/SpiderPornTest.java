@@ -1,9 +1,9 @@
-package cn.panda.springspider;
+package cn.panda.spider;
 
 
-import cn.panda.springspider.dao.Porn91Dao;
-import cn.panda.springspider.spider.SpiderFor91;
-import cn.panda.springspider.spider.SpiderSingle;
+import cn.panda.spider.dao.Porn91Dao;
+import cn.panda.spider.spider.SpiderFor91;
+import cn.panda.spider.spider.SpiderSingle;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,9 +31,14 @@ public class SpiderPornTest {
     SpiderSingle spiderSingle;
 
 
+    //TODO
+    /**
+     * 爬取91qorn网站所有视频的网页链接等信息入口
+     */
     @Test
     public void test1(){
 
+        //加入代理支持
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
         httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
 
@@ -49,21 +54,23 @@ public class SpiderPornTest {
     @Test
     public void test2(){
 
-
         List<String> porn91List = porn91Dao.getAllAndOrderByChakanDesc();
         System.out.println(porn91List);
-
-
-
     }
 
+
+
+    //TODO
+    /**
+     * 下载视频入口
+     */
     @Test
     public void test3(){
 
-
+        //修改cn.panda.spider.dao.Porn91Dao.getAllAndOrderByChakanDesc，获取不同类型的视频链接
         List<String> urlList = porn91Dao.getAllAndOrderByChakanDesc();
 
-
+        //加入代理支持
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
         httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
 

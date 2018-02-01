@@ -1,4 +1,4 @@
-package cn.panda.springspider;
+package cn.panda.spider;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

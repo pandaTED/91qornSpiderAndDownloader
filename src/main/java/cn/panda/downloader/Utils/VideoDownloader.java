@@ -8,16 +8,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * @author ZhuYunpeng
- * woscaizi@gmail.com
- * 2018/1/30
+ * 视频文件下载工具，多线程
  */
-
 //@Component
 public class VideoDownloader implements Runnable{
 
     static  Logger logger = LoggerFactory.getLogger(VideoDownloader.class);
-
 
     private String url;
     private String name;
@@ -94,6 +90,7 @@ public class VideoDownloader implements Runnable{
 
         logger.info("========>"+url);
 
+        //TODO 修改保存目录
         try {
             downLoadFromUrl(url,name+".mp4","D:\\91porn");
         } catch (IOException e) {
