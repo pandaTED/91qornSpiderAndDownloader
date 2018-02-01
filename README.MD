@@ -1,4 +1,4 @@
-# 91qorn Spider And Download
+# 91qorn Spider And Downloader
 
 ## 系统要求
     1.JDK 1.8以上
@@ -14,9 +14,10 @@
 ## 运行
     1.修改 application-dev.yml 中数据库配置，运行时数据库表会自动建立
     2.爬取视频网页链接信息时不需要修改爬虫的cooikes信息，下载时需要在cn.panda.spider.spider.SpiderSingle内修改cookies信息，请使用自己的账号登录91，然后将cookies信息填写
-    2.运行入口：test内cn.panda.spider.SpiderPornTest.test1() 爬取视频网页链接到mysql
-    3.运行入口：test内cn.panda.spider.SpiderPornTest.test3() 根据筛选条件下载视频
-    4.筛选条件请在cn.panda.spider.dao.Porn91Dao.getAllAndOrderByChakanDesc()内修改sql语句
+    3.运行入口：test内cn.panda.spider.SpiderPornTest.test1() 爬取视频网页链接到mysql
+    4.修改cn.panda.downloader.Utils.VideoDownloader内的视频保存目录
+    5.运行入口：test内cn.panda.spider.SpiderPornTest.test3() 根据筛选条件下载视频
+    6.筛选条件请在cn.panda.spider.dao.Porn91Dao.getAllAndOrderByChakanDesc()内修改sql语句
     
 ## 目前架构很简单，分为两部分
     1.所有视频地址的爬取，采用爬列表页的方式，根据视频网页链接查重
