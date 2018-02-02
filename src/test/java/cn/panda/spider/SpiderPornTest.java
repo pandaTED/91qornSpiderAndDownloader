@@ -74,7 +74,16 @@ public class SpiderPornTest {
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
         httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
 
-        urlList.forEach(e->spiderSingle.getVedio(e,httpClientDownloader));
+//        urlList.forEach(e->spiderSingle.getVedio(e,httpClientDownloader));
+
+        spiderSingle.setTargetList(urlList);
+
+        Spider.create(spiderSingle).
+                addUrl(urlList.get(0)).
+                setScheduler(new QueueScheduler()).
+                setDownloader(httpClientDownloader).
+                thread(10).run();
+
 
     }
 

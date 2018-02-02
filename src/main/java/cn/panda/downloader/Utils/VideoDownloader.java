@@ -1,8 +1,12 @@
 package cn.panda.downloader.Utils;
 
+import cn.panda.spider.dao.Porn91Dao;
+import cn.panda.spider.entity.Porn91;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,6 +28,7 @@ public class VideoDownloader implements Runnable{
         this.name = name;
     }
 
+
     /**
      * 从网络Url中下载文件
      * @param urlStr
@@ -31,7 +36,25 @@ public class VideoDownloader implements Runnable{
      * @param savePath
      * @throws IOException
      */
-    public static void  downLoadFromUrl(String urlStr,String fileName,String savePath) throws IOException {
+    public static Integer  downLoadFromUrl(String urlStr,String fileName,String savePath) throws IOException {
+
+        Integer status = 0; //下载成功 1下载出错
+
+        //文件保存位置
+        File saveDir = new File(savePath);
+
+        if(!saveDir.exists()){
+            saveDir.mkdir();
+        }
+
+        String saveFileName = saveDir+File.separator+fileName;
+        File file = new File(saveFileName);
+
+        if(file.exists()){
+            Thread.currentThread().interrupt();
+            logger.info("文件已存在，保存线程中断");
+        }
+
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         //设置超时间为3秒
@@ -40,19 +63,35 @@ public class VideoDownloader implements Runnable{
         conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
 
         //得到输入流
-        InputStream inputStream = conn.getInputStream();
-        //获取自己数组
-        byte[] getData = readInputStream(inputStream);
+        InputStream inputStream = null;
 
-        //文件保存位置
-        File saveDir = new File(savePath);
-        if(!saveDir.exists()){
-            saveDir.mkdir();
+        try {
+            inputStream = conn.getInputStream();
+        } catch (IOException e) {
+            logger.info("======>打开链接出错！");
+            status = 1;
+            e.printStackTrace();
         }
-        File file = new File(saveDir+File.separator+fileName);
+
+        //获取自己数组
+        byte[] getData = new byte[0];
+        try {
+            getData = readInputStream(inputStream);
+        } catch (IOException e) {
+            logger.info("======>获取输入流数组出错！");
+            status = 1;
+            e.printStackTrace();
+        }
+
         FileOutputStream fos = new FileOutputStream(file);
 
-        fos.write(getData);
+        try {
+            fos.write(getData);
+        } catch (IOException e) {
+            logger.info("========>保存文件出错！");
+            status = 1;
+            e.printStackTrace();
+        }
 
         if(fos!=null){
             fos.close();
@@ -62,7 +101,9 @@ public class VideoDownloader implements Runnable{
             inputStream.close();
         }
 
-       logger.info("info:"+url+" download success");
+        logger.info("info:"+url+" download success");
+
+        return status;
 
     }
 
@@ -88,11 +129,9 @@ public class VideoDownloader implements Runnable{
     @Override
     public void run() {
 
-        logger.info("========>"+url);
-
         //TODO 修改保存目录
         try {
-            downLoadFromUrl(url,name+".mp4","D:\\91porn");
+            downLoadFromUrl(url,name+".mp4","E:\\91porn");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,6 +1,8 @@
 package cn.panda.spider.spider;
 
 import cn.panda.downloader.Utils.VideoDownloader;
+import cn.panda.spider.dao.Porn91Dao;
+import cn.panda.spider.entity.Porn91;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +13,10 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author ZhuYunpeng
@@ -23,6 +29,14 @@ public class SpiderSingle implements PageProcessor {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Resource
+    Porn91Dao porn91Dao;
+
+    private List<String> targetList;
+
+    public void setTargetList(List<String> targetList) {
+        this.targetList = targetList;
+    }
 
     @Bean
     SpiderSingle getSpiderSingle(){
@@ -35,8 +49,8 @@ public class SpiderSingle implements PageProcessor {
             addCookie("91username","").     //请自己登录91根据实际填写
             addCookie("__cfduid","").   //请自己登录91根据实际填写
             addCookie("CLIPSHARE","").  //请自己登录91根据实际填写
-            addCookie("DUID","bc33%").
-            addCookie("EMAILVERIFIED","no").
+            addCookie("DUID","").
+            addCookie("EMAILVERIFIED","").
             addCookie("level","7").
             addCookie("user_level","7").
             addCookie("USERNAME","").   //请自己登录91根据实际填写
@@ -60,6 +74,11 @@ public class SpiderSingle implements PageProcessor {
 //        System.out.println(page.getHtml().toString());
 //        System.out.println("============================");
 
+
+        //添加目标链接
+       page.addTargetRequests(targetList);
+
+
        logger.info("vedioUrl====>"+vedioUrl);
 
         if(null != vedioUrl){
@@ -68,6 +87,20 @@ public class SpiderSingle implements PageProcessor {
             logger.info("spider===================="+vedioUrl);
             logger.info("name===================="+name);
             logger.info("====================");
+
+
+            try {
+                Porn91 porn91 = porn91Dao.getByVideoLink(page.getUrl().toString());
+
+                porn91.setVideoLink(page.getUrl().toString());
+                porn91.setVideoSource(vedioUrl);
+                porn91.setIsDownloaded(0);
+
+                porn91Dao.save(porn91);     //保存视频下载链接
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
 
             try {
 
@@ -82,18 +115,16 @@ public class SpiderSingle implements PageProcessor {
 
     }
 
-
-    public void getVedio(String url, HttpClientDownloader httpClientDownloader){
-
-        Spider.create(getSpiderSingle()).addUrl(url).
-                setScheduler(new QueueScheduler()).
-                setDownloader(httpClientDownloader).
-                thread(1).
-                run();
-
-    }
-
-
+//
+//    public void getVedio(String url, HttpClientDownloader httpClientDownloader){
+//
+//        Spider.create(getSpiderSingle()).addUrl(url).
+//                setScheduler(new QueueScheduler()).
+//                setDownloader(httpClientDownloader).
+//                thread(1).
+//                run();
+//
+//    }
 
 
 }

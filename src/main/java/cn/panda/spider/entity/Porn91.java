@@ -61,4 +61,15 @@ public class Porn91 {
      * 积分
      */
     String jifen;
+
+    /**
+     * 视频下载地址
+     */
+    @Column(unique = true)
+    String videoSource;
+
+    /**
+     * 是否已下载
+     */
+    Integer isDownloaded;
 }
