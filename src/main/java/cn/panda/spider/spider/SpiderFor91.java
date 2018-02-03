@@ -8,6 +8,8 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class SpiderFor91 implements PageProcessor{
@@ -46,6 +48,8 @@ public class SpiderFor91 implements PageProcessor{
         String jifen ="//*[@id=\"videobox\"]/table/tbody/tr/td/div[%s]/text(15)";
 
 
+        List<Porn91> porn91List = new ArrayList<>();
+
         for(int i =1;i<=20;i++){
 
             System.out.println("=========================================");
@@ -62,7 +66,6 @@ public class SpiderFor91 implements PageProcessor{
             System.out.println(page.getHtml().xpath(String.format(jifen,i)).toString().replace(" ",""));
             System.out.println("=========================================");
 
-
             porn91 = new Porn91();
             porn91.setImgUlr(page.getHtml().xpath(String.format(imgUlr,i)).toString());
             porn91.setChakan(page.getHtml().xpath(String.format(chakan,i)).toString().replace(" ",""));
@@ -76,11 +79,13 @@ public class SpiderFor91 implements PageProcessor{
             porn91.setZuozheName(page.getHtml().xpath(String.format(zuozheName,i)).toString());
             porn91.setZuozheLink(page.getHtml().xpath(String.format(zuozheLink,i)).toString());
 
-            try{
-                porn91Dao.save(porn91);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            porn91List.add(porn91);
+        }
+
+        try{
+            porn91Dao.save(porn91List);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
     }

@@ -15,6 +15,7 @@ import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -74,7 +75,7 @@ public class SpiderPornTest {
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
         httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
 
-//        urlList.forEach(e->spiderSingle.getVedio(e,httpClientDownloader));
+//      urlList.forEach(e->spiderSingle.getVedio(e,httpClientDownloader));
 
         spiderSingle.setTargetList(urlList);
 

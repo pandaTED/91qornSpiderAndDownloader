@@ -46,14 +46,14 @@ public class SpiderSingle implements PageProcessor {
     private Site site = Site.me().
             setDomain("91porn.com").
             addCookie("language","cn_CN").
-            addCookie("91username","").     //请自己登录91根据实际填写
-            addCookie("__cfduid","").   //请自己登录91根据实际填写
-            addCookie("CLIPSHARE","").  //请自己登录91根据实际填写
-            addCookie("DUID","").
-            addCookie("EMAILVERIFIED","").
+            addCookie("91username","woscaizi").     //请自己登录91根据实际填写
+            addCookie("__cfduid","dd76563328fbdc0c75f7b747cec8299f41517663725").   //请自己登录91根据实际填写
+            addCookie("CLIPSHARE","moc2laeofvvkqe0n9p84u7lv36").  //请自己登录91根据实际填写
+            addCookie("DUID","1bceHNaZ3xC4SBgk7gWZ4VIJYn3F9W9aZWbaYIOYcL0bX9dD").
+            addCookie("EMAILVERIFIED","no").
             addCookie("level","7").
             addCookie("user_level","7").
-            addCookie("USERNAME","").   //请自己登录91根据实际填写
+            addCookie("USERNAME","5aac56IPj0UEX%2FOfwC5c8%2B%2FtPE90SjprkvDxYaBxuv%2FK3ZcN6Q").   //请自己登录91根据实际填写
             setRetryTimes(3).
             setSleepTime(1000).
             setTimeOut(10000);
@@ -100,7 +100,6 @@ public class SpiderSingle implements PageProcessor {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
             try {
 
