@@ -1,12 +1,8 @@
-package cn.panda.downloader.Utils;
+package cn.panda.spider.downloadutil;
 
-import cn.panda.spider.dao.Porn91Dao;
-import cn.panda.spider.entity.Porn91;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,14 +15,14 @@ public class VideoDownloader implements Runnable{
 
     static  Logger logger = LoggerFactory.getLogger(VideoDownloader.class);
 
-    private String url;
-    private String name;
-
-    public VideoDownloader(String url, String name) {
-        super();
-        this.url = url;
-        this.name = name;
-    }
+//    private String url;
+//    private String name;
+//
+//    public VideoDownloader(String url, String name) {
+//        super();
+//        this.url = url;
+//        this.name = name;
+//    }
 
 
     /**
@@ -129,12 +125,14 @@ public class VideoDownloader implements Runnable{
     @Override
     public void run() {
 
-        //TODO 修改保存目录
-        try {
-            downLoadFromUrl(url,name+".mp4","E:\\91porn");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        //TODO 修改保存目录
+//        try {
+//            downLoadFromUrl(url,name+".mp4","E:\\91porn");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        System.out.println("===========>"+Thread.currentThread().getName());
 
     }
 }

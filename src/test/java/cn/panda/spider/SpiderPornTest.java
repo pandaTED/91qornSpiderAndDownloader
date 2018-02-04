@@ -1,7 +1,9 @@
 package cn.panda.spider;
 
 
+import cn.panda.spider.downloadutil.DownloadThreadPool;
 import cn.panda.spider.dao.Porn91Dao;
+import cn.panda.spider.downloadutil.VideoDownloader;
 import cn.panda.spider.spider.SpiderFor91;
 import cn.panda.spider.spider.SpiderSingle;
 import org.junit.Test;
@@ -15,8 +17,9 @@ import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -30,6 +33,12 @@ public class SpiderPornTest {
 
     @Resource
     SpiderSingle spiderSingle;
+
+//    @Resource
+//    VideoDownloaderPool videoDownloaderPool;
+
+    @Resource
+    DownloadThreadPool downloadThreadPool;
 
 
     //TODO
@@ -84,6 +93,22 @@ public class SpiderPornTest {
                 setScheduler(new QueueScheduler()).
                 setDownloader(httpClientDownloader).
                 thread(10).run();
+
+
+    }
+
+    @Test
+    public void test4(){
+
+
+        List<String> videoSourceLinkList = porn91Dao.getVideoSourceLink();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+
+//        System.out.println("videoSourceLinkList-Size======================>"+videoSourceLinkList.size());
+
+//        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader(e,(System.currentTimeMillis()+Math.random()*10+""))));
+        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader()));
 
 
     }

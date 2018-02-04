@@ -21,6 +21,14 @@ public class UtilTest {
 
         }
 
+        @Test
+        public void test2(){
+
+            System.out.println((int)Math.ceil((double) (89/100D)));
+            System.out.println((int)Math.ceil((double) (189/100D)));
+            System.out.println((int)Math.ceil((double) (289/100D)));
+
+        }
 
 
 }

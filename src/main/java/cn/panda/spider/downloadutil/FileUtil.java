@@ -1,6 +1,4 @@
-package cn.panda.downloader.Utils;
-
-import java.io.File;
+package cn.panda.spider.downloadutil;
 
 /**
  * @author ZhuYunpeng

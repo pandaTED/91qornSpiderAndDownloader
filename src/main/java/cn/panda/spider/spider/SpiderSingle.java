@@ -1,20 +1,16 @@
 package cn.panda.spider.spider;
 
-import cn.panda.downloader.Utils.VideoDownloader;
 import cn.panda.spider.dao.Porn91Dao;
 import cn.panda.spider.entity.Porn91;
+import cn.panda.spider.overall.Overall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.scheduler.QueueScheduler;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -32,6 +28,18 @@ public class SpiderSingle implements PageProcessor {
     @Resource
     Porn91Dao porn91Dao;
 
+    /**
+     * 全局工具，主要是分批保存视频源链接
+     */
+    @Resource
+    Overall overall;
+
+    /**
+     * 线程池
+     */
+//    @Resource
+//    VideoDownloaderPool videoDownloaderPool;
+
     private List<String> targetList;
 
     public void setTargetList(List<String> targetList) {
@@ -46,14 +54,14 @@ public class SpiderSingle implements PageProcessor {
     private Site site = Site.me().
             setDomain("91porn.com").
             addCookie("language","cn_CN").
-            addCookie("91username","woscaizi").     //请自己登录91根据实际填写
-            addCookie("__cfduid","dd76563328fbdc0c75f7b747cec8299f41517663725").   //请自己登录91根据实际填写
-            addCookie("CLIPSHARE","moc2laeofvvkqe0n9p84u7lv36").  //请自己登录91根据实际填写
-            addCookie("DUID","1bceHNaZ3xC4SBgk7gWZ4VIJYn3F9W9aZWbaYIOYcL0bX9dD").
-            addCookie("EMAILVERIFIED","no").
-            addCookie("level","7").
-            addCookie("user_level","7").
-            addCookie("USERNAME","5aac56IPj0UEX%2FOfwC5c8%2B%2FtPE90SjprkvDxYaBxuv%2FK3ZcN6Q").   //请自己登录91根据实际填写
+            addCookie("91username","%20").     //请自己登录91根据实际填写
+            addCookie("__cfduid","%20").   //请自己登录91根据实际填写
+            addCookie("CLIPSHARE","%20").  //请自己登录91根据实际填写
+            addCookie("DUID","%20").
+            addCookie("EMAILVERIFIED","yes").
+            addCookie("level","10").
+            addCookie("user_level","10").
+            addCookie("USERNAME","%20").   //请自己登录91根据实际填写
             setRetryTimes(3).
             setSleepTime(1000).
             setTimeOut(10000);
@@ -83,6 +91,9 @@ public class SpiderSingle implements PageProcessor {
 
         if(null != vedioUrl){
 
+
+            logger.info("Overall===========================>"+overall);
+
             logger.info("====================");
             logger.info("spider===================="+vedioUrl);
             logger.info("name===================="+name);
@@ -96,15 +107,20 @@ public class SpiderSingle implements PageProcessor {
                 porn91.setVideoSource(vedioUrl);
                 porn91.setIsDownloaded(0);
 
-                porn91Dao.save(porn91);     //保存视频下载链接
+                overall.saveVideoSource(porn91);
+
+//              porn91Dao.save(porn91);     //保存视频下载链接
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             try {
 
-                VideoDownloader videoDownloader = new VideoDownloader(vedioUrl,name);
-                new Thread(videoDownloader).start();
+                //修改为线程池的方式
+                  //TODO
+//                VideoDownloader videoDownloader = new VideoDownloader(vedioUrl,name);
+//                new Thread(videoDownloader).start();
+//                videoDownloaderPool.execute(videoDownloader);
 
             } catch (Exception e) {
                 e.printStackTrace();
