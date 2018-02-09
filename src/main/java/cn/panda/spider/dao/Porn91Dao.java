@@ -21,7 +21,7 @@ public interface Porn91Dao extends JpaRepository<Porn91,Long> {
     Porn91 getByVideoLink(String url);
 
 
-    @Query(nativeQuery = true,value = "SELECT video_source FROM porn91 WHERE video_source is NOT null")
-    List<String> getVideoSourceLink();
+    @Query(nativeQuery = true,value = "SELECT * FROM porn91 WHERE video_source is NOT null")
+    List<Porn91> getVideoSourceLink();
 
 }

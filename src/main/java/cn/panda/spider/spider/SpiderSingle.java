@@ -1,6 +1,8 @@
 package cn.panda.spider.spider;
 
 import cn.panda.spider.dao.Porn91Dao;
+import cn.panda.spider.downloadutil.DownloadThreadPool;
+import cn.panda.spider.downloadutil.VideoDownloader;
 import cn.panda.spider.entity.Porn91;
 import cn.panda.spider.overall.Overall;
 import org.slf4j.Logger;
@@ -37,8 +39,8 @@ public class SpiderSingle implements PageProcessor {
     /**
      * 线程池
      */
-//    @Resource
-//    VideoDownloaderPool videoDownloaderPool;
+    @Resource
+    DownloadThreadPool downloadThreadPool;
 
     private List<String> targetList;
 
@@ -54,14 +56,14 @@ public class SpiderSingle implements PageProcessor {
     private Site site = Site.me().
             setDomain("91porn.com").
             addCookie("language","cn_CN").
-            addCookie("91username","%20").     //请自己登录91根据实际填写
-            addCookie("__cfduid","%20").   //请自己登录91根据实际填写
-            addCookie("CLIPSHARE","%20").  //请自己登录91根据实际填写
-            addCookie("DUID","%20").
-            addCookie("EMAILVERIFIED","yes").
-            addCookie("level","10").
-            addCookie("user_level","10").
-            addCookie("USERNAME","%20").   //请自己登录91根据实际填写
+//            addCookie("91username","").     //请自己登录91根据实际填写
+//            addCookie("__cfduid","").   //请自己登录91根据实际填写
+//            addCookie("CLIPSHARE","").  //请自己登录91根据实际填写
+//            addCookie("DUID","").
+//            addCookie("EMAILVERIFIED","no").
+            addCookie("level","7").
+            addCookie("user_level","7").
+//            addCookie("USERNAME","").   //请自己登录91根据实际填写
             setRetryTimes(3).
             setSleepTime(1000).
             setTimeOut(10000);
@@ -82,10 +84,8 @@ public class SpiderSingle implements PageProcessor {
 //        System.out.println(page.getHtml().toString());
 //        System.out.println("============================");
 
-
         //添加目标链接
        page.addTargetRequests(targetList);
-
 
        logger.info("vedioUrl====>"+vedioUrl);
 
@@ -118,9 +118,9 @@ public class SpiderSingle implements PageProcessor {
 
                 //修改为线程池的方式
                   //TODO
-//                VideoDownloader videoDownloader = new VideoDownloader(vedioUrl,name);
+                VideoDownloader videoDownloader = new VideoDownloader(vedioUrl,name);
 //                new Thread(videoDownloader).start();
-//                videoDownloaderPool.execute(videoDownloader);
+                downloadThreadPool.execute(videoDownloader);
 
             } catch (Exception e) {
                 e.printStackTrace();

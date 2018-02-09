@@ -20,14 +20,19 @@ public class DownloadThreadPool {
     //创建固定量的线程池
         //后期修改为手动创建线程池
             //TODO
-    ExecutorService executorService = Executors.newFixedThreadPool(10);
+    ExecutorService executorService;
+
+    @PostConstruct
+    void init(){
+        if(executorService == null){
+            executorService = Executors.newFixedThreadPool(50);
+        }
+    }
 
     /**
      * 将线程放入线程池
      */
     public void execute(VideoDownloader videoDownloader){
-
-      logger.info("executorService=======================>"+executorService);
 
       executorService.execute(videoDownloader);
 //      executorService.shutdown(); //关闭线程池

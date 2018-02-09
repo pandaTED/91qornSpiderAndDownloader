@@ -4,6 +4,7 @@ package cn.panda.spider;
 import cn.panda.spider.downloadutil.DownloadThreadPool;
 import cn.panda.spider.dao.Porn91Dao;
 import cn.panda.spider.downloadutil.VideoDownloader;
+import cn.panda.spider.entity.Porn91;
 import cn.panda.spider.spider.SpiderFor91;
 import cn.panda.spider.spider.SpiderSingle;
 import org.junit.Test;
@@ -37,8 +38,8 @@ public class SpiderPornTest {
 //    @Resource
 //    VideoDownloaderPool videoDownloaderPool;
 
-    @Resource
-    DownloadThreadPool downloadThreadPool;
+//    @Resource
+//    DownloadThreadPool downloadThreadPool;
 
 
     //TODO
@@ -98,18 +99,27 @@ public class SpiderPornTest {
     }
 
     @Test
-    public void test4(){
+    public void test4() throws InterruptedException {
 
 
-        List<String> videoSourceLinkList = porn91Dao.getVideoSourceLink();
+        List<Porn91> videoSourceLinkList = porn91Dao.getVideoSourceLink();
 
         ExecutorService executorService = Executors.newFixedThreadPool(100);
 
 //        System.out.println("videoSourceLinkList-Size======================>"+videoSourceLinkList.size());
+//        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader(e,String.valueOf(System.currentTimeMillis()+(int)(Math.random()*10)))));
+//        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader()));
 
-//        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader(e,(System.currentTimeMillis()+Math.random()*10+""))));
-        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader()));
+        Porn91 porn91 = null;
 
+        for (int i = 0; i < videoSourceLinkList.size(); i++) {
+
+            porn91 = videoSourceLinkList.get(i);
+            executorService.execute(new VideoDownloader(porn91.getVideoSource(),porn91.getTitleXpath()));
+
+            Thread.sleep(1000*3);
+
+        }
 
     }
 
