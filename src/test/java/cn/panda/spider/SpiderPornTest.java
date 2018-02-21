@@ -53,11 +53,19 @@ public class SpiderPornTest {
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
         httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
 
-        Spider.create(spiderFor91).addUrl("http://91porn.com/v.php?next=watch&page=1").
+        //创建爬虫spider类
+        Spider spider = Spider.create(spiderFor91);
+
+        //将当前类传入到spiderFor91中
+        spiderFor91.setSpider(spider);
+
+        //开始运行，如果1分钟内没有新的视频获取到，将自动停止爬虫
+        spider.addUrl("http://91porn.com/v.php?next=watch&page=1").
                 setScheduler(new QueueScheduler()).
                 setDownloader(httpClientDownloader).
                 thread(5).
                 run();
+
 
     }
 
@@ -85,7 +93,9 @@ public class SpiderPornTest {
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
         httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
 
-//      urlList.forEach(e->spiderSingle.getVedio(e,httpClientDownloader));
+        System.out.println("===================================");
+        System.out.println("满足条件的视频：===>"+urlList.size());
+        System.out.println("===================================");
 
         spiderSingle.setTargetList(urlList);
 

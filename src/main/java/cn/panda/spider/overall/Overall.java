@@ -21,6 +21,8 @@ public class Overall {
 
     volatile static List<Porn91> videoSourceList = Collections.synchronizedList(new ArrayList<>());
 
+    public volatile static Long lastSaveTimeStamp = System.currentTimeMillis();
+
     @Resource
     Porn91Dao porn91Dao;
 
