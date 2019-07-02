@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
  * @author ZhuYunpeng
  * woscaizi@gmail.com
  * 2018/2/4
+ * 下载线程池
  */
 @Component
 public class DownloadThreadPool {
@@ -25,7 +26,7 @@ public class DownloadThreadPool {
     @PostConstruct
     void init(){
         if(executorService == null){
-            executorService = Executors.newFixedThreadPool(50);
+            executorService = Executors.newFixedThreadPool(100);
         }
     }
 
@@ -33,9 +34,7 @@ public class DownloadThreadPool {
      * 将线程放入线程池
      */
     public void execute(VideoDownloader videoDownloader){
-
       executorService.execute(videoDownloader);
-//      executorService.shutdown(); //关闭线程池
     }
 
 }

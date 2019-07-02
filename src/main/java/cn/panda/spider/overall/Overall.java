@@ -23,6 +23,8 @@ public class Overall {
 
     public volatile static Long lastSaveTimeStamp = System.currentTimeMillis();
 
+    public volatile static Integer failTimes = 0;
+
     @Resource
     Porn91Dao porn91Dao;
 
@@ -36,12 +38,10 @@ public class Overall {
      * @return
      */
     private Integer addVideoSource(Porn91 porn91) {
-
         synchronized (videoSourceList) {
             videoSourceList.add(porn91);
             return videoSourceList.size();
         }
-
     }
 
 
@@ -52,7 +52,6 @@ public class Overall {
      */
     private void saveToMysqlVideoSource(Integer size) {
 
-//      Integer num = 1;
         List<Porn91> toSaveList = null;
 
         logger.info("源视频List大小为====>" + size);
@@ -62,7 +61,6 @@ public class Overall {
             synchronized (videoSourceList) {
 
                 //分割List
-//            num = (int)Math.ceil(size / 100D) ;
                 toSaveList = videoSourceList.subList(0, 8);
                 //保存
 
@@ -76,8 +74,6 @@ public class Overall {
                 }
 
                 //移除已保存
-//                toSaveList.forEach(e -> videoSourceList.remove(e));
-
                 try {
                     videoSourceList.removeAll(toSaveList);
                     logger.info("=====>移除已保存成功！");
@@ -100,20 +96,14 @@ public class Overall {
      * @return
      */
     public void saveVideoSource(Porn91 porn91) {
-
         synchronized (videoSourceList) {
-
             Integer size = addVideoSource(porn91);
-
             try {
                 saveToMysqlVideoSource(size);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
     }
-
 
 }

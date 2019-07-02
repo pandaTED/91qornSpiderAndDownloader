@@ -8,6 +8,4 @@ package cn.panda.spider.downloadutil;
  */
 public class FileUtil {
 
-
-
 }

@@ -1,26 +1,24 @@
 package cn.panda.spider;
 
 
-import cn.panda.spider.downloadutil.DownloadThreadPool;
 import cn.panda.spider.dao.Porn91Dao;
+import cn.panda.spider.downloadutil.DownloadThreadPool;
 import cn.panda.spider.downloadutil.VideoDownloader;
 import cn.panda.spider.entity.Porn91;
 import cn.panda.spider.spider.SpiderFor91;
-import cn.panda.spider.spider.SpiderSingle;
+import cn.panda.spider.spider.SpiderFor91DetailPage;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.HttpClientDownloader;
-import us.codecraft.webmagic.proxy.Proxy;
-import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -33,14 +31,13 @@ public class SpiderPornTest {
     Porn91Dao porn91Dao;
 
     @Resource
-    SpiderSingle spiderSingle;
+    SpiderFor91DetailPage spiderFor91DetailPage;
 
-//    @Resource
-//    VideoDownloaderPool videoDownloaderPool;
+    @Resource
+    VideoGet videoGet;
 
-//    @Resource
-//    DownloadThreadPool downloadThreadPool;
-
+    @Resource
+    DownloadThreadPool downloadThreadPool;
 
     //TODO
     /**
@@ -51,7 +48,7 @@ public class SpiderPornTest {
 
         //加入代理支持
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
-        httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
+//        httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",2080)));
 
         //创建爬虫spider类
         Spider spider = Spider.create(spiderFor91);
@@ -65,23 +62,13 @@ public class SpiderPornTest {
                 setDownloader(httpClientDownloader).
                 thread(5).
                 run();
-
-
     }
-
-
-    @Test
-    public void test2(){
-
-        List<String> porn91List = porn91Dao.getAllAndOrderByChakanDesc();
-        System.out.println(porn91List);
-    }
-
 
 
     //TODO
     /**
      * 下载视频入口
+     *
      */
     @Test
     public void test3(){
@@ -91,44 +78,76 @@ public class SpiderPornTest {
 
         //加入代理支持
         HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
-        httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",1080)));
+//        httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("127.0.0.1",2080)));
 
         System.out.println("===================================");
         System.out.println("满足条件的视频：===>"+urlList.size());
         System.out.println("===================================");
 
-        spiderSingle.setTargetList(urlList);
+        spiderFor91DetailPage.setTargetList(urlList);
 
-        Spider.create(spiderSingle).
+       Spider.create(spiderFor91DetailPage).
                 addUrl(urlList.get(0)).
                 setScheduler(new QueueScheduler()).
                 setDownloader(httpClientDownloader).
-                thread(10).run();
+                thread(1).run();
 
 
     }
 
-    @Test
-    public void test4() throws InterruptedException {
 
+    /**
+     * 使用Phantom来获取视频链接
+     */
+    @Test
+    public void test5() {
+
+        List<Porn91> toBeDownload = porn91Dao.getToBeDownload();
+
+        for (Porn91 porn91 : toBeDownload) {
+
+            videoGet.setPorn91(porn91);
+            videoGet.run();
+
+        }
+
+
+    }
+
+
+    /**
+     * 手动下载视频
+     * @throws InterruptedException
+     */
+    @Test
+    public void test4() {
 
         List<Porn91> videoSourceLinkList = porn91Dao.getVideoSourceLink();
 
-        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        //手动创建线程池
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("video-downloader-thread-%d").build();
 
-//        System.out.println("videoSourceLinkList-Size======================>"+videoSourceLinkList.size());
-//        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader(e,String.valueOf(System.currentTimeMillis()+(int)(Math.random()*10)))));
-//        videoSourceLinkList.forEach(e->executorService.execute(new VideoDownloader()));
+//        ExecutorService executorService = Executors.newFixedThreadPool(300);
+        ExecutorService executorService = new ThreadPoolExecutor(10,
+                24,
+                10L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(),
+                namedThreadFactory);
 
         Porn91 porn91 = null;
 
         for (int i = 0; i < videoSourceLinkList.size(); i++) {
-
             porn91 = videoSourceLinkList.get(i);
-            executorService.execute(new VideoDownloader(porn91.getVideoSource(),porn91.getTitleXpath()));
+            executorService.execute(new VideoDownloader(porn91.getVideoSource(),porn91.getTitleXpath(),porn91Dao));
+        }
 
-            Thread.sleep(1000*3);
+        executorService.shutdown();
 
+        try {
+            executorService.awaitTermination(3000, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
     }

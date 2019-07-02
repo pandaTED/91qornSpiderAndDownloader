@@ -1,4 +1,5 @@
 package cn.panda.spider.spider;
+import java.util.Date;
 
 import cn.panda.spider.dao.Porn91Dao;
 import cn.panda.spider.entity.Porn91;
@@ -48,8 +49,6 @@ public class SpiderFor91 implements PageProcessor{
     @Override
     public void process(Page page) {
 
-        Porn91 porn91 = null;
-
         page.addTargetRequests(page.getHtml().links().regex(listUrl).all());
 
         String videoLink = "//*[@id=\"videobox\"]/table/tbody/tr/td/div[%s]/div[1]/a/@href";
@@ -73,32 +72,48 @@ public class SpiderFor91 implements PageProcessor{
 
             if(!existVideoLink.contains(videoLinkString)){
 
-                System.out.println("=================新增========================");
-                System.out.println(page.getHtml().xpath(String.format(videoLink,i)));
-                System.out.println(page.getHtml().xpath(String.format(titleXpath,i)));
-                System.out.println(page.getHtml().xpath(String.format(imgUlr,i)));
-                System.out.println(page.getHtml().xpath(String.format(zuozheLink,i)));
-                System.out.println(page.getHtml().xpath(String.format(zuozheName,i)));
-                System.out.println(page.getHtml().xpath(String.format(shijian,i)));
-                System.out.println(page.getHtml().xpath(String.format(tianjiashijian,i)).toString().replace(" ",""));
-                System.out.println(page.getHtml().xpath(String.format(chakan,i)).toString().replace(" ",""));
-                System.out.println(page.getHtml().xpath(String.format(shoucang,i)).toString().replace(" ",""));
-                System.out.println(page.getHtml().xpath(String.format(liuyan,i)).toString().replace(" ",""));
-                System.out.println(page.getHtml().xpath(String.format(jifen,i)).toString().replace(" ",""));
+
+                String videoLinkStr = page.getHtml().xpath(String.format(videoLink, i)).toString().replace("&viewtype=basic&category=mr","").replaceAll(ragex,"");
+                String titleXpathStr = page.getHtml().xpath(String.format(titleXpath, i)).toString();
+                String imgUrlStr = page.getHtml().xpath(String.format(imgUlr, i)).toString();
+                String zuozheLinkStr = page.getHtml().xpath(String.format(zuozheLink, i)).toString();
+                String zuozheNameStr = page.getHtml().xpath(String.format(zuozheName, i)).toString();
+                String shijianStr = page.getHtml().xpath(String.format(shijian, i)).toString();
+                String tianjiashijianStr = page.getHtml().xpath(String.format(tianjiashijian, i)).toString().replace(" ", "");
+                String chakanStr = page.getHtml().xpath(String.format(chakan, i)).toString().replace(" ", "");
+                String shoucangStr = page.getHtml().xpath(String.format(shoucang, i)).toString().replace(" ", "");
+                String liuyanStr = page.getHtml().xpath(String.format(liuyan, i)).toString().replace(" ", "");
+                String jifenStr = page.getHtml().xpath(String.format(jifen, i)).toString().replace(" ", "");
+
+
                 System.out.println("=================新增========================");
 
-                porn91 = new Porn91();
-                porn91.setImgUlr(page.getHtml().xpath(String.format(imgUlr,i)).toString());
-                porn91.setChakan(page.getHtml().xpath(String.format(chakan,i)).toString().replace(" ",""));
-                porn91.setJifen(page.getHtml().xpath(String.format(jifen,i)).toString().replace(" ",""));
-                porn91.setLiuyan(page.getHtml().xpath(String.format(liuyan,i)).toString().replace(" ",""));
-                porn91.setShijian(page.getHtml().xpath(String.format(shijian,i)).toString());
-                porn91.setShoucang(page.getHtml().xpath(String.format(shoucang,i)).toString().replace(" ",""));
-                porn91.setTianjiashijian(page.getHtml().xpath(String.format(tianjiashijian,i)).toString().replace(" ",""));
-                porn91.setTitleXpath(page.getHtml().xpath(String.format(titleXpath,i)).toString());
-                porn91.setVideoLink(page.getHtml().xpath(String.format(videoLink,i)).toString().replace("&viewtype=basic&category=mr","").replaceAll(ragex,""));
-                porn91.setZuozheName(page.getHtml().xpath(String.format(zuozheName,i)).toString());
-                porn91.setZuozheLink(page.getHtml().xpath(String.format(zuozheLink,i)).toString());
+                System.out.println(videoLinkStr);
+                System.out.println(titleXpathStr);
+                System.out.println(imgUrlStr);
+                System.out.println(zuozheLinkStr);
+                System.out.println(zuozheNameStr);
+                System.out.println(shijianStr);
+                System.out.println(tianjiashijianStr);
+                System.out.println(chakanStr);
+                System.out.println(shoucangStr);
+                System.out.println(liuyanStr);
+                System.out.println(jifenStr);
+
+                System.out.println("=================新增========================");
+
+                Porn91 porn91 = new Porn91();
+                porn91.setVideoLink(videoLinkStr);
+                porn91.setTitleXpath(titleXpathStr);
+                porn91.setImgUlr(imgUrlStr);
+                porn91.setZuozheLink(zuozheLinkStr);
+                porn91.setZuozheName(zuozheNameStr);
+                porn91.setShijian(shijianStr);
+                porn91.setTianjiashijian(tianjiashijianStr);
+                porn91.setChakan(chakanStr);
+                porn91.setShoucang(shoucangStr);
+                porn91.setLiuyan(liuyanStr);
+                porn91.setJifen(jifenStr);
 
                 porn91List.add(porn91);
 

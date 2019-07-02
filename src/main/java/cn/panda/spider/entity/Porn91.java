@@ -3,6 +3,7 @@ package cn.panda.spider.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 
 /**
@@ -68,8 +69,6 @@ public class Porn91 {
     @Column(unique = true)
     String videoSource;
 
-    /**
-     * 是否已下载
-     */
-    Integer isDownloaded;
+    Date downloadTime;
+
 }

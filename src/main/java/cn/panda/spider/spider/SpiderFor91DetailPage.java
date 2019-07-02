@@ -14,6 +14,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ import java.util.List;
  * 2018/1/30
  */
 @Component
-public class SpiderSingle implements PageProcessor {
+public class SpiderFor91DetailPage implements PageProcessor {
 
 
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -49,23 +50,16 @@ public class SpiderSingle implements PageProcessor {
     }
 
     @Bean
-    SpiderSingle getSpiderSingle(){
-        return new SpiderSingle();
+    SpiderFor91DetailPage getSpiderSingle(){
+        return new SpiderFor91DetailPage();
     }
 
+    //TODO
+    // 改为模拟登陆获取这些信息？？
     private Site site = Site.me().
             setDomain("91porn.com").
             addCookie("language","cn_CN").
-            addCookie("91username","woscaizi").     //请自己登录91根据实际填写
-            addCookie("__cfduid","d814916499a171f3342836441dafb9f681528533800").   //请自己登录91根据实际填写
-            addCookie("CLIPSHARE","407nmt11ao8llb4lmsrts4ekt5").  //请自己登录91根据实际填写
-            addCookie("DUID","a18fOQDtvLgmiyblEqyf04quCQj8BvYpKwla6EtZImkWJNoo").
-            addCookie("EMAILVERIFIED","no").
-            addCookie("level","7").
-            addCookie("user_level","7").
-            addCookie("USERNAME","b3e1lKufhrFbCH1DtyBYvuFQxtgGf3IPB8eu9WkhmZ%2FQW10kXQ").   //请自己登录91根据实际填写
-            setRetryTimes(3).
-            setSleepTime(1000).
+            setSleepTime(30*1000).
             setTimeOut(10000);
 
     @Override
@@ -79,15 +73,16 @@ public class SpiderSingle implements PageProcessor {
 
        String vedioUrl =  page.getHtml().xpath("//div/video/source/@src").toString();
        String name = page.getHtml().xpath("//*[@id=\"viewvideo-title\"]/text()").toString();
+       String isMissing = "//*[@id=\"container\"]/div";
 
-//        System.out.println("============================");
-//        System.out.println(page.getHtml().toString());
-//        System.out.println("============================");
+        System.out.println("============================");
+        System.out.println(page.getHtml().toString());
+        System.out.println("============================");
 
         //添加目标链接
        page.addTargetRequests(targetList);
-
-       logger.info("vedioUrl====>"+vedioUrl);
+        int statusCode = page.getStatusCode();
+        logger.info("statusCode=============>{}",statusCode);
 
         if(null != vedioUrl){
 
@@ -105,7 +100,6 @@ public class SpiderSingle implements PageProcessor {
 
                 porn91.setVideoLink(page.getUrl().toString());
                 porn91.setVideoSource(vedioUrl);
-                porn91.setIsDownloaded(0);
 
                 overall.saveVideoSource(porn91);
 
@@ -119,27 +113,19 @@ public class SpiderSingle implements PageProcessor {
                 //修改为线程池的方式
                   //TODO
                 VideoDownloader videoDownloader = new VideoDownloader(vedioUrl,name);
-//                new Thread(videoDownloader).start();
                 downloadThreadPool.execute(videoDownloader);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+        }else{
+
+            logger.info("===============>视频链接是空了！！！！！");
+            Overall.failTimes++;
+
         }
-
     }
-
-//
-//    public void getVedio(String url, HttpClientDownloader httpClientDownloader){
-//
-//        Spider.create(getSpiderSingle()).addUrl(url).
-//                setScheduler(new QueueScheduler()).
-//                setDownloader(httpClientDownloader).
-//                thread(1).
-//                run();
-//
-//    }
 
 
 }
