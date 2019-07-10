@@ -8,8 +8,12 @@ import cn.panda.spider.entity.Porn91;
 import cn.panda.spider.spider.SpiderFor91;
 import cn.panda.spider.spider.SpiderFor91DetailPage;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import us.codecraft.webmagic.Spider;
@@ -17,11 +21,13 @@ import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@Slf4j
 public class SpiderPornTest {
 
     @Resource
@@ -32,9 +38,6 @@ public class SpiderPornTest {
 
     @Resource
     SpiderFor91DetailPage spiderFor91DetailPage;
-
-    @Resource
-    VideoGet videoGet;
 
     @Resource
     DownloadThreadPool downloadThreadPool;
@@ -100,17 +103,38 @@ public class SpiderPornTest {
      * 使用Phantom来获取视频链接
      */
     @Test
-    public void test5() {
+    public void test5() throws InterruptedException {
 
         List<Porn91> toBeDownload = porn91Dao.getToBeDownload();
 
+        //手动创建线程池
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("video-get-%d").build();
+
+        ExecutorService executorService = new ThreadPoolExecutor(15,
+                24,
+                10L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(),
+                namedThreadFactory);
+
+
+//        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+
         for (Porn91 porn91 : toBeDownload) {
-
-            videoGet.setPorn91(porn91);
-            videoGet.run();
-
+            System.out.println(porn91.getId());
+            VideoGet videoGet = new VideoGet(porn91);
+            executorService.submit(videoGet);
         }
 
+
+        executorService.shutdown();
+
+        try {
+            executorService.awaitTermination(3000, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -150,6 +174,50 @@ public class SpiderPornTest {
             e.printStackTrace();
         }
 
+    }
+
+
+    @Test
+    public void test6(){
+
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+        for (int i = 0; i < 10; i++) {
+
+            WebTask webTask = new WebTask();
+            executorService.submit(webTask);
+        }
+
+        executorService.shutdown();
+
+        try {
+            executorService.awaitTermination(1000,TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    class WebTask implements Runnable{
+
+        @Override
+        public void run() {
+
+            String chromeDriverPath = "E:\\chromedriver.exe";
+            System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
+            WebDriver driver = new ChromeDriver(options);
+
+            driver.get("http://www.baidu.com");
+
+            driver.manage().timeouts().implicitlyWait(1000*5,TimeUnit.SECONDS);
+
+            String title = driver.getTitle();
+
+            System.out.println("title===============>"+title);
+        }
     }
 
 
