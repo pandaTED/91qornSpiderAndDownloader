@@ -30,7 +30,7 @@ public interface Porn91Dao extends JpaRepository<Porn91,Long> {
     @Query(nativeQuery = true,value = "SELECT video_link FROM porn91")
     List<String> getAllExistVideoLink();
 
-    @Query(nativeQuery = true,value = "SELECT * FROM porn91 WHERE (title_xpath LIKE '%泰安%' OR title_xpath LIKE '%露脸%' OR title_xpath LIKE '%眼镜%' OR title_xpath LIKE '%办公%' OR title_xpath LIKE '%家%')  AND video_source is null ORDER BY id DESC;")
+    @Query(nativeQuery = true,value = "SELECT * FROM porn91 WHERE (title_xpath LIKE '%眼镜%' OR title_xpath like '%泰安%' OR title_xpath like '%露脸%' OR title_xpath like '%大学%' OR title_xpath like '%办公室%') AND video_source is null ORDER BY id DESC;")
     List<Porn91> getToBeDownload();
 
 }

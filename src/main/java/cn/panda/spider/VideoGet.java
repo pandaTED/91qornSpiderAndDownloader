@@ -1,10 +1,8 @@
 package cn.panda.spider;
 
-import cn.panda.spider.dao.Porn91Dao;
-import cn.panda.spider.downloadutil.DownloadThreadPool;
-import cn.panda.spider.downloadutil.VideoDownloader;
+import cn.panda.spider.downloadutil.UpdateVideoInfoTask;
+import cn.panda.spider.downloadutil.VideoDownloadTask;
 import cn.panda.spider.entity.Porn91;
-import cn.panda.spider.util.BeanUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -44,11 +42,11 @@ public class VideoGet implements Runnable {
 
         WebDriver driver = browserDriverBuild.getDriver();
 
-        System.out.println("driver=================>"+driver);
+        System.out.println("driver=================>" + driver);
 
         if (null != driver) {
 
-            System.out.println("title==============>"+title+",url=================>"+url);
+            System.out.println("title==============>" + title + ",url=================>" + url);
 
             if (null != title && null != url) {
 
@@ -71,25 +69,25 @@ public class VideoGet implements Runnable {
                     String src = null;
                     try {
                         src = source.getAttribute("src");
-                        System.out.println("src================>"+src);
+                        System.out.println("src================>" + src);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
 //        String pageSource = driver.getPageSource();
 
-                    DownloadThreadPool downloadThreadPool = BeanUtil.getBean(DownloadThreadPool.class);
 
                     if (null != src) {
-                        VideoDownloader videoDownloader = new VideoDownloader(src, title);
-                        downloadThreadPool.execute(videoDownloader);
+                        //视频下载子线程
+                        VideoDownloadTask videoDownloadTask = new VideoDownloadTask(src, title);
+                        videoDownloadTask.run();
 
+                        //保存视频信息子线程
                         porn91.setVideoSource(src);
                         porn91.setDownloadTime(new Date());
 
-                        Porn91Dao porn91Dao = BeanUtil.getBean(Porn91Dao.class);
-
-                        porn91Dao.save(porn91);
+                        UpdateVideoInfoTask updateVideoInfo = new UpdateVideoInfoTask(porn91);
+                        updateVideoInfo.run();
                     }
                 }
 

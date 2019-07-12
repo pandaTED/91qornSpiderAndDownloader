@@ -107,10 +107,14 @@ public class SpiderPornTest {
 
         List<Porn91> toBeDownload = porn91Dao.getToBeDownload();
 
+        int size = toBeDownload.size();
+
+        log.info("size================>{}",size);
+
         //手动创建线程池
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("video-get-%d").build();
 
-        ExecutorService executorService = new ThreadPoolExecutor(15,
+        ExecutorService executorService = new ThreadPoolExecutor(12,
                 24,
                 10L,
                 TimeUnit.SECONDS,
@@ -128,13 +132,14 @@ public class SpiderPornTest {
         }
 
 
-        executorService.shutdown();
-
         try {
             executorService.awaitTermination(3000, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
+        executorService.shutdown();
 
     }
 

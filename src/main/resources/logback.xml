@@ -2,17 +2,9 @@
 <configuration>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>%d{HH:mm:ss.SSS} %-5level %logger{80} - %msg%n</Pattern>
+			<Pattern>%d [%thread] %level %logger - %m%n</Pattern>
 		</encoder>
 	</appender>
-	<appender name="fileAppender" class="ch.qos.logback.core.FileAppender">  
-	    <file>../logs/log.txt</file>
-	    <encoder><!-- 必须指定，否则不会往文件输出内容 -->  
-	        <pattern>%d{HH:mm:ss.SSS} %-5level %logger{80} - %msg%n</pattern>  
-	    </encoder>  
-	    <append>true</append>  
-	    <prudent>false</prudent>  
-	</appender>  
 	<root>
 		<level value="INFO" />
 		<appender-ref ref="STDOUT" />
