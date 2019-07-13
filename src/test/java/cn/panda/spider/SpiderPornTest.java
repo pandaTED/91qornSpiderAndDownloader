@@ -106,10 +106,8 @@ public class SpiderPornTest {
     public void test5() throws InterruptedException {
 
         List<Porn91> toBeDownload = porn91Dao.getToBeDownload();
-
         int size = toBeDownload.size();
-
-        log.info("size================>{}",size);
+        log.info("需要下载的视频个数================>{}",size);
 
         //手动创建线程池
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("video-get-%d").build();
@@ -126,11 +124,9 @@ public class SpiderPornTest {
 
 
         for (Porn91 porn91 : toBeDownload) {
-            System.out.println(porn91.getId());
             VideoGet videoGet = new VideoGet(porn91);
             executorService.submit(videoGet);
         }
-
 
         try {
             executorService.awaitTermination(3000, TimeUnit.SECONDS);

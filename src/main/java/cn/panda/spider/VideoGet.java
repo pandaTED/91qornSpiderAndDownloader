@@ -55,6 +55,8 @@ public class VideoGet implements Runnable {
                     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }finally {
+                    driver.quit();
                 }
 
                 WebElement source = null;
@@ -92,12 +94,6 @@ public class VideoGet implements Runnable {
                 }
 
 
-                try {
-                    driver.quit();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
 
             } else {
 
@@ -106,7 +102,6 @@ public class VideoGet implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
 
             }
 
