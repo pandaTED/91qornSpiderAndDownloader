@@ -51,48 +51,50 @@ public class VideoGet implements Runnable {
             if (null != title && null != url) {
 
                 try {
+
                     driver.get(url);
                     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+                    WebElement source = null;
+
+                    try {
+                        source = driver.findElement(By.tagName("source"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (null != source) {
+
+                        String src = null;
+
+                        try {
+                            src = source.getAttribute("src");
+                            System.out.println("src================>" + src);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+//        String pageSource = driver.getPageSource();
+
+                        if (null != src) {
+                            //视频下载子线程
+                            VideoDownloadTask videoDownloadTask = new VideoDownloadTask(src, title);
+                            videoDownloadTask.run();
+
+                            //保存视频信息子线程
+                            porn91.setVideoSource(src);
+                            porn91.setDownloadTime(new Date());
+
+                            UpdateVideoInfoTask updateVideoInfo = new UpdateVideoInfoTask(porn91);
+                            updateVideoInfo.run();
+                        }
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }finally {
                     driver.quit();
                 }
-
-                WebElement source = null;
-                try {
-                    source = driver.findElement(By.tagName("source"));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (null != source) {
-
-                    String src = null;
-                    try {
-                        src = source.getAttribute("src");
-                        System.out.println("src================>" + src);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-//        String pageSource = driver.getPageSource();
-
-
-                    if (null != src) {
-                        //视频下载子线程
-                        VideoDownloadTask videoDownloadTask = new VideoDownloadTask(src, title);
-                        videoDownloadTask.run();
-
-                        //保存视频信息子线程
-                        porn91.setVideoSource(src);
-                        porn91.setDownloadTime(new Date());
-
-                        UpdateVideoInfoTask updateVideoInfo = new UpdateVideoInfoTask(porn91);
-                        updateVideoInfo.run();
-                    }
-                }
-
 
 
             } else {
